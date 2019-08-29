@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.meetingactivity">
+
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+
+    <application
+        android:name=".Activity.GlobalApplication"
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:roundIcon="@mipmap/ic_launcher_round"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme"
+        android:usesCleartextTraffic="true">
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Activity.UpdateActivity"></activity>
+        <activity android:name=".Activity.SearchActivity" android:windowSoftInputMode="adjustResize" />
+        <activity android:name=".Activity.SetActivity" android:label=".SetActivity" />
+        <activity android:name=".Activity.MypageActivity" android:label="" />
+        <activity android:name=".Activity.BannerActivity"></activity>
+        <activity android:name=".Activity.SettingActivity" />
+        <activity android:name=".Activity.MessageActivity" />
+        <activity android:name=".Activity.MemberActivity" />
+        <activity android:name=".Activity.AdminActivity" />
+        <activity android:name=".Activity.MoimActivity"/>
+        <activity android:name=".Activity.Calendar_ReadActivity" />
+        <activity android:name=".Activity.Calendar_WriteActivity" />
+        <!-- 구글 맵에 필요한 meta data -->
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <!-- 구글 맵에 필요한 meta data의 인증 값 -->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyB0xvqeL3QtDlKcVhGXo7sHodCUMxEzrCA" />
+        <!-- 카카오에 필요한 meta data의 인증 값 -->
+        <meta-data
+            android:name="com.kakao.sdk.AppKey"
+            android:value="e55af6f02134336be2dbd2fa6cda3b97" />
+         <provider
+            android:authorities="${applicationId}.fileprovider"
+            android:name="android.support.v4.content.FileProvider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/file_paths"/>
+        </provider>
+    </application>
+
+</manifest>
