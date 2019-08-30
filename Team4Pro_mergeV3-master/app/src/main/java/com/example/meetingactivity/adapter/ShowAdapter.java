@@ -43,7 +43,7 @@ public class ShowAdapter extends ArrayAdapter<Board> {
             ImageView imageView = convertView.findViewById(R.id.imageView);
             ImageView boardImage = convertView.findViewById(R.id.boardImage);
 
-            textUsername.setText(item.getId());
+            textUsername.setText(item.getName());
             textEditdate.setText(item.getEditdate());
             textSubject.setText(item.getSubject());
             textContent.setText(item.getContent());

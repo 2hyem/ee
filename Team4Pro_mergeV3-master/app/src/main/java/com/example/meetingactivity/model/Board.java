@@ -6,6 +6,7 @@ public class Board implements Serializable {
     private int listnum;          //게시글 번호
     private String id;             //작성자 아이디
     private int moimcode;         //글이 작성된 모임 코드
+    private String name;        //작성자 이름_카카오 닉네임
     private String subject;       //제목
     private String content;       //내용
     private String filename;      //저장된 사진 이름
@@ -16,7 +17,7 @@ public class Board implements Serializable {
     public Board() {
     }
 
-    public Board(int listnum, String id, int moimcode, String subject, String content, String filename, String thumb, String editdate, int lev) {
+    public Board(int listnum, String id, int moimcode, String subject, String content, String filename, String thumb, String editdate, int lev,String name) {
         this.listnum = listnum;
         this.id = id;
         this.moimcode = moimcode;
@@ -25,7 +26,16 @@ public class Board implements Serializable {
         this.filename = filename;
         this.thumb = thumb;
         this.editdate = editdate;
+        this.name=name;
         this.lev = lev;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public int getListnum() {

@@ -36,6 +36,8 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
 
     List<MoimUser> listUsers;
     MoimUser moimUser;
+
+
     // 혜민씨한테 받아올 데이터(id, 모임코드)
     Mypage mypageItem;
 
@@ -57,7 +59,7 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
     String URLTotUser = "http://192.168.0.93:8080/moim.4t.spring/testMoimUsets.tople";
 
     // 서버에 전달해줄 모임코드
-    int moimcode;
+   String moimcode;
     // 받아서 수정해줄 모임정보
 
     @Override
@@ -71,11 +73,12 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
         button4 = findViewById(R.id.button4);
 
         //moimUSetting = (MoimUser) getIntent().getSerializableExtra("item");
-
+        Intent intent = getIntent();
         mypageItem=(Mypage) getIntent().getSerializableExtra("item");
 //        moimcode=mypageItem.getMoimcode();
 //        Toast.makeText(this,moimcode,Toast.LENGTH_SHORT).show();
         user_id = getIntent().getStringExtra("user_id");
+
 
         clientUser = new AsyncHttpClient();
         responseUser = new HttpResponseUser();
@@ -95,14 +98,20 @@ public class AdminActivity extends AppCompatActivity implements View.OnClickList
     protected void onResume() {
         super.onResume();
         listUsers = new ArrayList<>();
+        //값확인
+       // Toast.makeText(this,user_id,Toast.LENGTH_SHORT).show();
+        Toast.makeText(this,user_id,Toast.LENGTH_SHORT).show();
+
         // id로 조회한 유저정보
         RequestParams paramsUser = new RequestParams();
         // 아이디 불러오기
         paramsUser.put("user_id", user_id);
+
         clientUser.post(URLUser, paramsUser, responseUser);
         // 전체 유저정보
         RequestParams paramsUsers = new RequestParams();
 //        paramsUsers.put("moincode", moimUSetting.getMoimcode());
+        paramsUser.put("moimcode",moimcode);
         clientTotUser.post(URLTotUser, paramsUsers, responseTotUser);
     }
 

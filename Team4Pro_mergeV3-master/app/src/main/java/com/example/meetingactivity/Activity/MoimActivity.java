@@ -181,12 +181,12 @@ public class MoimActivity extends AppCompatActivity implements View.OnClickListe
 
                 return true;
             case R.id.menu_manage:
-                Toast.makeText(this,"안뇽",Toast.LENGTH_SHORT).show();
+
                 Intent intent = new Intent(this,AdminActivity.class);
                 // 인텐트에 데이터 저장
                 intent.putExtra("item", item1);
                 intent.putExtra("user_id", user_id);
-                intent.putExtra("moimCode",item1.getMoimcode());
+
                 startActivity(intent);
 
             default:

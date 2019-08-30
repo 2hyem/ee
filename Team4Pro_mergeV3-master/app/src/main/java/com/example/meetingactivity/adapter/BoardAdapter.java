@@ -33,11 +33,11 @@ public class BoardAdapter extends ArrayAdapter<Board> {
         Board item = getItem(position);
 
         if (item != null) {
-            TextView textView6 = convertView.findViewById(R.id.textView6);
-            TextView textView9 = convertView.findViewById(R.id.textView9);
+            TextView noticeSubject = convertView.findViewById(R.id.noticeSubject);
+            TextView noticeContent = convertView.findViewById(R.id.noticeContent);
 
-            textView6.setText(item.getSubject());
-            textView9.setText(item.getContent());
+            noticeSubject.setText(item.getSubject());
+            noticeContent.setText(item.getContent());
         }
 
         return convertView;

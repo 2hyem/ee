@@ -113,7 +113,7 @@
                             android:layout_height="35dp" />
 
                         <TextView
-                            android:id="@+id/textView9"
+                            android:id="@+id/noticeContent"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:text="앱정보"

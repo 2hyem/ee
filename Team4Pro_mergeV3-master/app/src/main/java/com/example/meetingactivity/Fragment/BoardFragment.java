@@ -20,6 +20,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
+import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -59,7 +60,7 @@ import cz.msebera.android.httpclient.Header;
  * Use the {@link BoardFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BoardFragment extends Fragment implements View.OnClickListener {
+public class BoardFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     ImageButton noticeButton;
     // TODO: Rename parameter arguments, choose names that match
@@ -77,7 +78,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     private Boolean isFabOpen = false;
     private FloatingActionButton fab,fab1,fab2;
     LinearLayout fabLayout,fabLayout1,fabLayout2,boardLayout;
-    LinearLayout binputLayout;
+    LinearLayout binputLayout,layoutDetail;
     TextView textFab1,textFab2;
     Button bbntBack, bbntWrite;
     EditText bSubject,bContent;
@@ -85,6 +86,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     ArrayList<Board> list1,list2;
     ImageButton imageButton;
     ImageView imageView;
+    TextView detailSubject,detailName,detailContent;
+    EditText repleText;
+    Button detailBack,repleSave;
+    ImageView detailImage;
+
 
 
 
@@ -92,7 +98,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     BoardAdapter adapter1;
     //통신용 객체 선언
     AsyncHttpClient client;
-    HttpResponse response;
+    HttpResponse_Boardlist response;
+    HttpResponse_BoardSelect response_boardSelect;
 
 
 
@@ -106,10 +113,12 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
     // listView용 URL
     String URLlist= "http://192.168.0.93:8080/moim.4t.spring/testselectMoimBoard.tople";
 
+    String URL_BoardDeatil = "http://192.168.0.93:8080/moim.4t.spring/testselectBoard.tople";
+
     // 데이터 가져올 객체 선언
     String user_id;
     Mypage item;
-    MoimUser moimUser;
+    Board board;
     // 업로드할 사진파일의 경로
     String filePathBig = null;
 
@@ -139,7 +148,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         fab_close=AnimationUtils.loadAnimation(getActivity(),R.anim.fab_close);
 
         client=new AsyncHttpClient();
-        response= new HttpResponse(getActivity());
+        response= new HttpResponse_Boardlist(getActivity());
 
 
 
@@ -177,6 +186,19 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         //일반게시글 레이아웃
         binputLayout=view.findViewById(R.id.binputLayout);
 
+        //글상세화면
+        layoutDetail=view.findViewById(R.id.layoutDetail);
+
+       detailSubject=view.findViewById(R.id.detailSubject);
+
+       detailName=view.findViewById(R.id.detailName);
+
+       detailContent=view.findViewById(R.id.detailContent);
+
+       repleText=view.findViewById(R.id.repleText);
+       detailBack =view.findViewById(R.id.detailBack);
+       repleSave=view.findViewById(R.id.repleSave);
+       detailImage=view.findViewById(R.id.detailImage);
 
         //공지사항 입력 후 리스트에 추가
         listNotice=view.findViewById(R.id.listNotice);
@@ -188,10 +210,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         adapter2=new ShowAdapter(getActivity(),R.layout.list_board,list2);
         listNotice.setAdapter(adapter1);
         listBoard.setAdapter(adapter2);
-
+        listBoard.setOnItemClickListener(this);
 
         imageView=view.findViewById(R.id.imageView3);
-
 
         //게시글
         bbntBack=view.findViewById(R.id.bbntBack);
@@ -206,6 +227,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
 
         bbntBack.setOnClickListener(this);
         bbntWrite.setOnClickListener(this);
+
+        detailBack.setOnClickListener(this);
+        repleSave.setOnClickListener(this);
 
         fab.setOnClickListener(this);
         fab1.setOnClickListener(this);
@@ -271,7 +295,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 boardLayout.setVisibility(View.GONE);
                 fabLayout.setVisibility(View.GONE);
                 binputLayout.setVisibility(View.VISIBLE);
-
                 break;
             case R.id.fab2: //공지사항 입력화면으로  //+모임장 또는 관리자 권한을 가진사람만 보여주게해야함
                 masterLev="1";
@@ -279,7 +302,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 boardLayout.setVisibility(View.GONE);
                 fabLayout.setVisibility(View.GONE);
                 binputLayout.setVisibility(View.VISIBLE);
-
                 break;
             case R.id.bbntBack: //돌아가기 버튼
                 bSubject.setText("");
@@ -292,33 +314,24 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                 String subject=bSubject.getText().toString().trim();
                 String content=bContent.getText().toString().trim();
 
-                Toast.makeText(getActivity(),lev,Toast.LENGTH_SHORT).show();
-
                 //입력값이 있으면, 서버로 데이터 전송 및 요청
                 RequestParams params = new RequestParams();
-
-
 
                 if(masterLev.equals("1")){
                     lev = "1"; //공지사항 -1 일반게시글-2
                 }else if(masterLev.equals("2")){
                     lev="2";
-
                 }
 
                 params.put("id",user_id);
                 params.put("subject",subject);
                 params.put("content",content);
                 params.put("moimcode",item.getMoimcode());
-
                 params.put("lev",lev);
-                //  params.put();
 
 
                 if (filePathBig == null) {
                     params.setForceMultipartEntityContentType(true);
-
-
                 } else{
                     try {
                         params.put("filename",new File(filePathBig));
@@ -340,7 +353,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                                 getlist();
                             }else {
                                 Toast.makeText(getActivity(),"실패",Toast.LENGTH_SHORT).show();
-
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -387,43 +399,90 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        boardLayout.setVisibility(View.GONE);
+        fabLayout.setVisibility(View.GONE);
+        layoutDetail.setVisibility(View.VISIBLE);
+        RequestParams params = new RequestParams();
+        params.put("listnum",board.getListnum());
+        client.post(URL_BoardDeatil,params,response_boardSelect);
+        detailContent.setText(board.getContent());
+        detailSubject.setText(board.getSubject());
+        detailName.setText(board.getName());
+        //detailImage.setImageResource(board.getFilename());
+
+    }
+
 
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-
-
-    class HttpResponse extends AsyncHttpResponseHandler {
+    //특정게시글 조회 통신
+     class HttpResponse_BoardSelect extends AsyncHttpResponseHandler {
         Activity activity;
         ProgressDialog dialog;
 
-        public HttpResponse(Activity activity) {
+        public HttpResponse_BoardSelect(Activity activity) {
             this.activity = activity;
-        }
-
-        //통신 시작
-        @Override
-        public void onStart() {
-            dialog = new ProgressDialog(activity);
-            dialog.setMessage("잠시만 기다려 주세요...");
-            dialog.setCancelable(false);
-            dialog.show();
-        }
-        // 통신 종료
-        @Override
-        public void onFinish() {
-            dialog.dismiss();
-            dialog = null;
         }
         //통신 성공
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
 
             String strJson = new String(responseBody);
+            try {
+                JSONObject json = new JSONObject(strJson);
 
+                JSONArray item = json.getJSONArray("item");
+                for (int i=0; i<item.length(); i++) {
+                    JSONObject temp = item.getJSONObject(i);
+                    Board board_select = new Board();
+
+                    board_select.setListnum(temp.getInt("listnum"));
+                    if (!temp.getString("filename").equals("")) {
+                        board_select.setFilename(temp.getString("filename"));
+                    }
+                    if (!temp.getString("thumb").equals("")) {
+                        board_select.setThumb(temp.getString("thumb"));
+                    }
+                    board_select.setName(temp.getString("name"));
+                    board_select.setSubject(temp.getString("subject"));
+                    board_select.setId(temp.getString("id"));
+                    board_select.setMoimcode(temp.getInt("moimcode"));
+                    board_select.setLev(temp.getInt("lev"));
+                    board_select.setEditdate(temp.getString("editdate"));
+                    board_select.setContent(temp.getString("content"));
+
+                    adapter2.add(board_select);
+                }
+            }
+            catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+        //통신 실패
+        @Override
+        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+            Toast.makeText(activity, "통신실패"+statusCode, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    //게시글 목록 조회 통신
+    class HttpResponse_Boardlist extends AsyncHttpResponseHandler {
+        Activity activity;
+
+        public HttpResponse_Boardlist(Activity activity) {
+            this.activity = activity;
+        }
+
+        //통신 성공
+        @Override
+        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+
+            String strJson = new String(responseBody);
             System.out.println("!!!!!!!!!!" + strJson);
-
             try {
                 JSONObject json = new JSONObject(strJson);
                 JSONArray normal = json.getJSONArray("normal");
@@ -439,6 +498,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                     if (!temp.getString("thumb").equals("")) {
                         normal_list.setThumb(temp.getString("thumb"));
                     }
+                    normal_list.setName(temp.getString("name"));
                     normal_list.setSubject(temp.getString("subject"));
                     normal_list.setId(temp.getString("id"));
                     normal_list.setMoimcode(temp.getInt("moimcode"));
@@ -460,6 +520,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
                     if (!temp.getString("thumb").equals("")) {
                         feel_list.setThumb(temp.getString("thumb"));
                     }
+                    feel_list.setName(temp.getString("name"));
                     feel_list.setSubject(temp.getString("subject"));
                     feel_list.setId(temp.getString("id"));
                     feel_list.setMoimcode(temp.getInt("moimcode"));
@@ -480,8 +541,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener {
             Toast.makeText(activity, "통신실패"+statusCode, Toast.LENGTH_SHORT).show();
         }
     }
-    /////////
 
+
+
+    //사진
     private void showLisDialogThumb() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         String[] items = {"새로 촬영하기", "갤러리에서 가져오기"}; // It should be Array

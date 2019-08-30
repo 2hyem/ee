@@ -31,6 +31,7 @@
                 android:id="@+id/txtTitle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginLeft="8dp"
                 android:text="TextView"
                 android:textAppearance="@style/TextAppearance.AppCompat.Large"
                 android:textColor="@color/com_kakao_account_button_background"
