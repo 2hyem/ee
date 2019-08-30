@@ -1,5 +1,7 @@
 package com.example.meetingactivity.Activity;
 
+import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
@@ -27,9 +29,18 @@ import com.example.meetingactivity.adapter.ContentsPagerAdapter;
 import com.example.meetingactivity.model.Board;
 import com.example.meetingactivity.model.MoimUser;
 import com.example.meetingactivity.model.Mypage;
+import com.loopj.android.http.AsyncHttpClient;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+
+import cz.msebera.android.httpclient.Header;
+import cz.msebera.android.httpclient.HttpResponse;
 
 public class MoimActivity extends AppCompatActivity implements View.OnClickListener, InforFragment.OnFragmentInteractionListener,
         BoardFragment.OnFragmentInteractionListener, CalendarFragment.OnFragmentInteractionListener, PhotoFragment.OnFragmentInteractionListener {
@@ -46,6 +57,10 @@ public class MoimActivity extends AppCompatActivity implements View.OnClickListe
 
     Mypage item1;
 
+    String URL_fav ="http://192.168.0.93:8080/moim.4t.spring/updateMemUserFav.tople";
+
+    //통신용 객체 선언
+    AsyncHttpClient client;
 
 
     MoimUser moimUser;
@@ -79,6 +94,7 @@ public class MoimActivity extends AppCompatActivity implements View.OnClickListe
             }
         });
 
+        client=new AsyncHttpClient();
 
 
         mContext = getApplicationContext();
@@ -101,26 +117,30 @@ public class MoimActivity extends AppCompatActivity implements View.OnClickListe
                 new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
 
         mTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
+            public synchronized void noti() {
+                mContentsPagerAdapter.notifyAll();
+            }
 
+
+            @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mViewPager.setCurrentItem(tab.getPosition());
 
                 switch (tab.getPosition()) {
                     case 0:
-                        System.out.println("???????????????000000000000000");
+
                         break;
                     case 1:
-                        System.out.println("???????????????1111111111");
+
                         break;
                     case 2:
-                        System.out.println("???????????????2222222222");
+
                         break;
                     case 3:
-                        System.out.println("???????????????333333333333");
+
                         break;
                     case 4:
-                        System.out.println("???????????????4444444444");
+
                         break;
                 }
 
@@ -175,9 +195,39 @@ public class MoimActivity extends AppCompatActivity implements View.OnClickListe
                     favValue=true;
                 }
                // item1.setFav(String.valueOf(favValue));
-               Toast.makeText(getApplicationContext(),"즐찾여부"+favValue,Toast.LENGTH_SHORT).show();
+              // Toast.makeText(getApplicationContext(),"즐찾여부"+favValue,Toast.LENGTH_SHORT).show();
                 RequestParams params = new RequestParams();
                 params.put("fav",favValue);
+                params.put("id",user_id);
+                params.put("moimcode",item1.getMoimcode());
+
+
+                client.post(URL_fav, params, new AsyncHttpResponseHandler() {
+                    @Override
+                    public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                        String strJson = new String(responseBody);
+                        try {
+                            JSONObject json = new JSONObject(strJson);
+                            String rt  = json.getString("result");
+                            System.out.println("result : " + rt);
+
+                            if(rt.equals("OK")){
+                                Toast.makeText(getApplicationContext(),"즐겨찾기 변경",Toast.LENGTH_SHORT).show();
+
+                            }else {
+                                Toast.makeText(getApplicationContext(),"실패",Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
+                        Toast.makeText(getApplicationContext(), "통신실패"+statusCode, Toast.LENGTH_SHORT).show();
+                    }
+                });
+
 
                 return true;
             case R.id.menu_manage:

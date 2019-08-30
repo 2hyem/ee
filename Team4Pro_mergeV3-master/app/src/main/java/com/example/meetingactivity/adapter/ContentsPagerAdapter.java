@@ -27,6 +27,8 @@ public class ContentsPagerAdapter extends FragmentStatePagerAdapter {
         this.intent = intent;
     }
 
+
+
     @Override
     public Fragment getItem(int position) {
 

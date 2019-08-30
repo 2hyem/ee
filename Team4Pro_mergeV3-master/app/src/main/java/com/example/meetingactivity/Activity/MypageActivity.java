@@ -209,7 +209,7 @@ public class MypageActivity extends AppCompatActivity   implements View.OnClickL
 
                 RequestParams params = new RequestParams();
                 ////////////// you should modify for final ///////////////
-                params.put("id" , "asdf"); // user_id 있는아이디 적용
+                params.put("id" , user_id); // user_id 있는아이디 적용
                 /////////////////////////////////////////////////////
                 params.put("loca" , loca);
                 params.put("moimname" , moimname);
@@ -329,7 +329,7 @@ public class MypageActivity extends AppCompatActivity   implements View.OnClickL
         // 통신 요청
         RequestParams params = new RequestParams();
         //////////////////////////
-        params.put("id", "asdf");
+        params.put("id", user_id);
         //////////////////////
         client.post(URL, params, response);
     }

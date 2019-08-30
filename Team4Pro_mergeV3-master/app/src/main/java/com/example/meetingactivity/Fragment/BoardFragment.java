@@ -30,13 +30,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.example.meetingactivity.Activity.BoardDetailActivity;
 import com.example.meetingactivity.R;
 import com.example.meetingactivity.adapter.BoardAdapter;
 import com.example.meetingactivity.adapter.ShowAdapter;
 import com.example.meetingactivity.helper.FileUtils;
 import com.example.meetingactivity.helper.PhotoHelper;
 import com.example.meetingactivity.model.Board;
-import com.example.meetingactivity.model.MoimUser;
 import com.example.meetingactivity.model.Mypage;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -82,24 +83,22 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
     TextView textFab1,textFab2;
     Button bbntBack, bbntWrite;
     EditText bSubject,bContent;
-    ListView listNotice,listBoard;
+    ListView listNotice,listBoard,listReple;
     ArrayList<Board> list1,list2;
     ImageButton imageButton;
     ImageView imageView;
-    TextView detailSubject,detailName,detailContent;
-    EditText repleText;
-    Button detailBack,repleSave;
-    ImageView detailImage;
+
 
 
 
 
     ShowAdapter adapter2;
+
     BoardAdapter adapter1;
     //통신용 객체 선언
     AsyncHttpClient client;
     HttpResponse_Boardlist response;
-    HttpResponse_BoardSelect response_boardSelect;
+
 
 
 
@@ -110,10 +109,10 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
     //String URLNoPhoto = "http://192.168.0.93:8080/moim.4t.spring/boardWriteNoFile.tople";
     // 사진이 있는 게시글작성 URL
     String URLWithPhoto = "http://192.168.0.93:8080/moim.4t.spring/boardWrite.tople";
-    // listView용 URL
-    String URLlist= "http://192.168.0.93:8080/moim.4t.spring/testselectMoimBoard.tople";
 
-    String URL_BoardDeatil = "http://192.168.0.93:8080/moim.4t.spring/testselectBoard.tople";
+    String URLlist=  "http://192.168.0.93:8080/moim.4t.spring/testselectMoimBoard.tople";
+
+
 
     // 데이터 가져올 객체 선언
     String user_id;
@@ -151,7 +150,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
         response= new HttpResponse_Boardlist(getActivity());
 
 
-
     }
 
 
@@ -164,8 +162,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
             user_id = getArguments().getString("user_id");
             item = (Mypage) getArguments().getSerializable("item");
         }
-        //System.out.println("getArguments()" + getArguments());
-
 
         // Inflate the layout for this fragment
         final View view =inflater.inflate(R.layout.fragment_board, container, false);
@@ -187,30 +183,34 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
         binputLayout=view.findViewById(R.id.binputLayout);
 
         //글상세화면
-        layoutDetail=view.findViewById(R.id.layoutDetail);
 
-       detailSubject=view.findViewById(R.id.detailSubject);
 
-       detailName=view.findViewById(R.id.detailName);
 
-       detailContent=view.findViewById(R.id.detailContent);
 
-       repleText=view.findViewById(R.id.repleText);
-       detailBack =view.findViewById(R.id.detailBack);
-       repleSave=view.findViewById(R.id.repleSave);
-       detailImage=view.findViewById(R.id.detailImage);
+
+       listReple=view.findViewById(R.id.listReple);
+
 
         //공지사항 입력 후 리스트에 추가
         listNotice=view.findViewById(R.id.listNotice);
         listBoard=view.findViewById(R.id.listBoard);
+
+
         list1 = new ArrayList<>();
         list2=new ArrayList<>();
 
+
+
+
+
         adapter1=new BoardAdapter(getActivity(),R.layout.list_notice,list1);
         adapter2=new ShowAdapter(getActivity(),R.layout.list_board,list2);
+
+
         listNotice.setAdapter(adapter1);
         listBoard.setAdapter(adapter2);
         listBoard.setOnItemClickListener(this);
+        listNotice.setOnItemClickListener(this);
 
         imageView=view.findViewById(R.id.imageView3);
 
@@ -220,7 +220,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
 
         bSubject=view.findViewById(R.id.bSubject);
         bContent=view.findViewById(R.id.bContent);
-
+        //게시글(이미지올리기)
         imageButton=view.findViewById(R.id.imageButton);
 
         imageButton.setOnClickListener(this);
@@ -228,8 +228,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
         bbntBack.setOnClickListener(this);
         bbntWrite.setOnClickListener(this);
 
-        detailBack.setOnClickListener(this);
-        repleSave.setOnClickListener(this);
 
         fab.setOnClickListener(this);
         fab1.setOnClickListener(this);
@@ -241,15 +239,21 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("!!!!!!222222222222222222222222222222");
+
         getlist();
     }
-
+    //게시글 리스트 받아오는 통신
     public void getlist() {
         RequestParams params = new RequestParams();
         params.put("moimcode", item.getMoimcode());
+        if (!adapter1.isEmpty())adapter1.clear();
+        if (!adapter2.isEmpty()) adapter2.clear();
         client.post(URLlist,params,response);
     }
+
+
+
+
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
@@ -280,6 +284,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
     //이벤트설정
     @Override
     public void onClick(View v) {
+
+     //   Intent intent = new Intent(getActivity(), MypageActivity.class);
+       // intent.putExtra("qeqe", "1212121");
+     //   getActivity().startActivity(intent);
+
         switch (v.getId()){
             // 이미지 업로드 버튼
             case R.id.imageButton: // 작은이미지 업로드
@@ -322,13 +331,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
                 }else if(masterLev.equals("2")){
                     lev="2";
                 }
-
                 params.put("id",user_id);
                 params.put("subject",subject);
                 params.put("content",content);
                 params.put("moimcode",item.getMoimcode());
                 params.put("lev",lev);
-
 
                 if (filePathBig == null) {
                     params.setForceMultipartEntityContentType(true);
@@ -358,7 +365,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
                             e.printStackTrace();
                         }
                     }
-
                     @Override
                     public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
                         Toast.makeText(getActivity(), "통신실패"+statusCode, Toast.LENGTH_SHORT).show();
@@ -371,6 +377,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
                 boardLayout.setVisibility(View.VISIBLE);
                 fabLayout.setVisibility(View.VISIBLE);
                 break;
+
+
         }
     }
 
@@ -401,17 +409,28 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        boardLayout.setVisibility(View.GONE);
-        fabLayout.setVisibility(View.GONE);
-        layoutDetail.setVisibility(View.VISIBLE);
-        RequestParams params = new RequestParams();
-        params.put("listnum",board.getListnum());
-        client.post(URL_BoardDeatil,params,response_boardSelect);
-        detailContent.setText(board.getContent());
-        detailSubject.setText(board.getSubject());
-        detailName.setText(board.getName());
-        //detailImage.setImageResource(board.getFilename());
+        int listnum = 0;
+        switch (parent.getId()) {
+            case R.id.listNotice:
+                Board temp1 = adapter1.getItem(position);
+                listnum=temp1.getListnum();
+                break;
+            case R.id.listBoard:
+                Board temp = adapter2.getItem(position);
+                listnum=temp.getListnum();
+                break;
+        }
+        Intent intent = new Intent(getActivity(), BoardDetailActivity.class);
+        intent.putExtra("item",item);
+        intent.putExtra("board",board);
+        intent.putExtra("user_id",user_id);
+        intent.putExtra("listnum", listnum);
+        getActivity().startActivity(intent);
 
+
+
+
+        //detailImage.setImageResource(board.getFilename());
     }
 
 
@@ -419,55 +438,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
-    //특정게시글 조회 통신
-     class HttpResponse_BoardSelect extends AsyncHttpResponseHandler {
-        Activity activity;
-        ProgressDialog dialog;
 
-        public HttpResponse_BoardSelect(Activity activity) {
-            this.activity = activity;
-        }
-        //통신 성공
-        @Override
-        public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
-
-            String strJson = new String(responseBody);
-            try {
-                JSONObject json = new JSONObject(strJson);
-
-                JSONArray item = json.getJSONArray("item");
-                for (int i=0; i<item.length(); i++) {
-                    JSONObject temp = item.getJSONObject(i);
-                    Board board_select = new Board();
-
-                    board_select.setListnum(temp.getInt("listnum"));
-                    if (!temp.getString("filename").equals("")) {
-                        board_select.setFilename(temp.getString("filename"));
-                    }
-                    if (!temp.getString("thumb").equals("")) {
-                        board_select.setThumb(temp.getString("thumb"));
-                    }
-                    board_select.setName(temp.getString("name"));
-                    board_select.setSubject(temp.getString("subject"));
-                    board_select.setId(temp.getString("id"));
-                    board_select.setMoimcode(temp.getInt("moimcode"));
-                    board_select.setLev(temp.getInt("lev"));
-                    board_select.setEditdate(temp.getString("editdate"));
-                    board_select.setContent(temp.getString("content"));
-
-                    adapter2.add(board_select);
-                }
-            }
-            catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-        //통신 실패
-        @Override
-        public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable error) {
-            Toast.makeText(activity, "통신실패"+statusCode, Toast.LENGTH_SHORT).show();
-        }
-    }
 
     //게시글 목록 조회 통신
     class HttpResponse_Boardlist extends AsyncHttpResponseHandler {
@@ -592,52 +563,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
     }
 
 
-
-    private void showLisDialogBig() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-        String[] items = {"새로 촬영하기", "갤러리에서 가져오기"}; // It should be Array
-        builder.setItems(items, new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                switch (which) {
-                    case 0: // 새로 촬영하기
-                        filePathBig = PhotoHelper.getInstance().getNewPhotoPath();
-                        // 카메라 앱 호출출 위한 암묵적 인텐트
-                        File file = new File(filePathBig);
-                        Uri uri = null;
-                        Intent camera_intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                            uri = FileProvider.getUriForFile(getActivity(),
-                                    getActivity().getPackageName() + ".fileprovider", file);
-                            camera_intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-                            camera_intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
-                        } else {
-                            uri = Uri.fromFile(file);
-                        }
-                        camera_intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-                        startActivityForResult(camera_intent, 100);
-                        Log.d("[INFO]", uri.toString());
-
-                        break;
-                    case 1: // 갤러리에서 가져오기
-                        Intent galleryIntent = null;
-                        if (Build.VERSION.SDK_INT >= 19) {
-                            galleryIntent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
-                            galleryIntent.addCategory(Intent.CATEGORY_OPENABLE);
-                        } else  {
-                            galleryIntent = new Intent(Intent.ACTION_GET_CONTENT);
-                        }
-                        // 임시 파일만 필터링
-                        galleryIntent.setType("image/*");
-                        galleryIntent.putExtra(Intent.EXTRA_LOCAL_ONLY,true );
-                        startActivityForResult(galleryIntent, 101);
-                        break;
-                }
-            }
-        });
-        AlertDialog dialog = builder.create();
-        dialog.show();
-    }
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         Log.d("[INFO]", "resultCode = " + resultCode);
@@ -652,12 +577,11 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
                 }
                 break;
             case 101: // 갤러리 앱
-                // requestCode : filePath가 아애 안나옴
-                // resultCode :  filePath = /storage/emulated/0/DCIM/Camera/IMG_20190802_011808.jpg
+
                 if (resultCode == getActivity().RESULT_OK){ // resultCode
-                    // 선택한 파일 경로 얻기
+
                     filePathBig = FileUtils.getPath(getActivity(), data.getData());
-                    //Log.d("[INFO]", "filePath = " + filePath);
+
                 }
                 break;
         }

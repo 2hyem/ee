@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/layoutDetail"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".Activity.BoardDetailActivity">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="2dp">
 
         <TextView
             android:id="@+id/txtView"
@@ -34,7 +37,9 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingBottom="2dp">
 
         <TextView
             android:id="@+id/textView8"
@@ -43,6 +48,7 @@
             android:layout_margin="2dp"
             android:text="작성자"
             android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+            android:textColor="@color/colorPrimary"
             android:textStyle="bold" />
 
         <TextView
@@ -58,7 +64,6 @@
         android:id="@+id/detailContent"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
         android:text="글내용"
         android:textAppearance="@style/TextAppearance.AppCompat.Medium"
         android:textSize="20sp" />
@@ -66,17 +71,31 @@
     <ImageView
         android:id="@+id/detailImage"
         android:layout_width="match_parent"
-        android:layout_height="100dp"
+        android:layout_height="150dp"
         android:layout_weight="1"
+        android:scaleType="fitXY"
         app:srcCompat="@mipmap/ic_launcher" />
 
-    <EditText
-        android:id="@+id/repleText"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:ems="10"
-        android:hint="댓글을 달아주세요."
-        android:inputType="textPersonName" />
+        android:orientation="horizontal">
+
+        <EditText
+            android:id="@+id/repleText"
+            android:layout_width="320dp"
+            android:layout_height="wrap_content"
+            android:ems="10"
+            android:hint="댓글을 달아주세요."
+            android:inputType="textPersonName" />
+
+        <Button
+            android:id="@+id/repleSave"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="댓글 등록" />
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
@@ -91,17 +110,18 @@
             android:text="돌아가기" />
 
         <Button
-            android:id="@+id/repleSave"
+            android:id="@+id/detailDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="댓글등록" />
+            android:text="게시글 삭제" />
 
     </LinearLayout>
 
     <ListView
-        android:id="@+id/listRenum"
+        android:id="@+id/listReple"
         android:layout_width="match_parent"
         android:layout_height="60dp"
         android:layout_weight="1" />
+
 </LinearLayout>

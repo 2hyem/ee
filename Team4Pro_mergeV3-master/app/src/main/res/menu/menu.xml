@@ -7,8 +7,9 @@
         android:id="@+id/action_search"
         android:icon="@drawable/icon_search2"
         android:title="Search"
-        app:showAsAction="always"
-        app:actionViewClass="android.support.v7.widget.SearchView"/>
+        android:visible="false"
+        app:actionViewClass="android.support.v7.widget.SearchView"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_member"
         android:icon="@drawable/icon_person"
@@ -18,6 +19,9 @@
         <item
             android:id="@+id/mewnu_fav"
             android:title="즐겨찾기" />
+        <item
+            android:id="@+id/menu_tal"
+            android:title="모임 탈퇴" />
         <item
             android:id="@+id/menu_manage"
             android:title="관리자페이지" />

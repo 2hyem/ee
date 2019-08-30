@@ -9,7 +9,7 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -18,16 +18,12 @@ import android.widget.Toast;
 import com.bumptech.glide.Glide;
 import com.example.meetingactivity.R;
 import com.example.meetingactivity.adapter.BoardAdapter;
-import com.example.meetingactivity.adapter.ShowAdapter;
-import com.example.meetingactivity.helper.FileUtils;
 import com.example.meetingactivity.model.Board;
 import com.example.meetingactivity.model.Mypage;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
-import com.nostra13.universalimageloader.core.DisplayImageOptions;
-import com.nostra13.universalimageloader.core.ImageLoader;
-import com.nostra13.universalimageloader.core.ImageLoaderConfiguration;
+
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -36,7 +32,7 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 import cz.msebera.android.httpclient.Header;
-import cz.msebera.android.httpclient.HttpResponse;
+
 
 
 public class InforFragment extends Fragment implements View.OnClickListener {
@@ -184,19 +180,19 @@ public class InforFragment extends Fragment implements View.OnClickListener {
         // 통신 시작
 
         //프래그먼트와 연결된 액티비티가 onStart()되어 사용자에게 프래그먼트가 보일 때 호출
-        @Override
-        public void onStart() {
-            dialog = new ProgressDialog(activity);
-            dialog.setMessage("잠시만 기다려 주세요...");
-            dialog.setCancelable(false);
-            dialog.show();
-        }
-        // 통신 종료
-        @Override
-        public void onFinish() {
-            dialog.dismiss();
-            dialog = null;
-        }
+//        @Override
+//        public void onStart() {
+//            dialog = new ProgressDialog(activity);
+//            dialog.setMessage("잠시만 기다려 주세요...");
+//            dialog.setCancelable(false);
+//            dialog.show();
+//        }
+//        // 통신 종료
+//        @Override
+//        public void onFinish() {
+//            dialog.dismiss();
+//            dialog = null;
+//        }
         // 통신 성공
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
@@ -237,12 +233,10 @@ public class InforFragment extends Fragment implements View.OnClickListener {
     }
 
 
-
     //프래그먼트와 연결된 액티비티가 onResume()되어 사용자와 상호작용할 수 있을 때 호출됨
     @Override
     public void onResume() {
         super.onResume();
-        System.out.println("!!!!!!1111111111111111111111111111111111111");
         getlist();
     }
 
