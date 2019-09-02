@@ -64,14 +64,16 @@
 
             <android.support.design.widget.FloatingActionButton
                 android:id="@+id/Detail_add"
-                android:layout_width="50dp"
-                android:layout_height="50dp"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_gravity="bottom|end"
                 android:layout_weight="1"
                 android:clickable="true"
-                app:backgroundTint="@color/colorAccent"
-                app:maxImageSize="70dp"
-                app:srcCompat="@drawable/icon_plus2" />
+                app:backgroundTint="@color/mainColor"
+                app:srcCompat="@drawable/icon_plus2"
+                app:fabCustomSize="50dp"
+                app:fabSize="auto"
+                app:maxImageSize="20dp" />
         </LinearLayout>
 
     </LinearLayout>

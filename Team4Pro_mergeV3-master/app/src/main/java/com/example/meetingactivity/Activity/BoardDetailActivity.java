@@ -10,6 +10,7 @@ import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,9 +36,11 @@ import cz.msebera.android.httpclient.Header;
 
 public class BoardDetailActivity extends AppCompatActivity implements View.OnClickListener {
     TextView detailSubject,detailName,detailContent;
-    EditText repleText;
-    Button detailBack,repleSave,detailDelete;
+    EditText repleText,bSubject,bContent;
+    Button detailBack,repleSave,detailDelete,detailUpdate;
     ImageView detailImage;
+
+
 
 
     RepleAdapter repleAdapter;
@@ -54,11 +57,11 @@ public class BoardDetailActivity extends AppCompatActivity implements View.OnCli
 
 
 
+
     //특정 글 조회
     String URL_BoardDeatil = "http://192.168.0.93:8080/moim.4t.spring/testselectBoard.tople";
     //특정 글 삭제
     String URL_BoardDelete ="http://192.168.0.93:8080/moim.4t.spring/deleteBoard.tople";
-
     //댓글입력
     String URL_RepleInsert ="http://192.168.0.93:8080/moim.4t.spring/writeReDat.tople";
     //댓글리스트
@@ -67,9 +70,15 @@ public class BoardDetailActivity extends AppCompatActivity implements View.OnCli
 
 
 
+
+
     int listnum=0;
     String user_id;
+    int lev=0;
+    String filename;
+    String thumb;
     Mypage mypage;
+    Board board;
 
     String reple;
 
@@ -85,10 +94,19 @@ public class BoardDetailActivity extends AppCompatActivity implements View.OnCli
         detailImage=findViewById(R.id.detailImage);
         repleText=findViewById(R.id.repleText);
         detailBack=findViewById(R.id.detailBack);
+        detailUpdate=findViewById(R.id.detailUpdate);
         detailDelete=findViewById(R.id.detailDelete);
         repleSave=findViewById(R.id.repleSave);
         listReple=findViewById(R.id.listReple);
 
+        bSubject=findViewById(R.id.bSubject);
+        bContent=findViewById(R.id.bContent);
+
+
+
+
+
+        detailUpdate.setOnClickListener(this);
         detailBack.setOnClickListener(this);
         detailDelete.setOnClickListener(this);
         repleSave.setOnClickListener(this);
@@ -99,10 +117,14 @@ public class BoardDetailActivity extends AppCompatActivity implements View.OnCli
         user_id = intent.getStringExtra("user_id");
         mypage= (Mypage) getIntent().getSerializableExtra("item");
         listnum = intent.getIntExtra("listnum",listnum);
+        board=(Board) getIntent().getSerializableExtra("board");
+
 
         list=new ArrayList<>();
         repleAdapter = new RepleAdapter(this,R.layout.item_reple,list);
         listReple.setAdapter(repleAdapter);
+
+
 
 
 
@@ -111,6 +133,7 @@ public class BoardDetailActivity extends AppCompatActivity implements View.OnCli
         response_repleInsert=new HttpResponse_RepleInsert(this);
         response_replelist=new HttpResponse_RepleList(this);
         response_boardDelete=new HttpResponse_BoardDelete(this);
+
 
     }
 
@@ -160,21 +183,37 @@ public class BoardDetailActivity extends AppCompatActivity implements View.OnCli
 
 
 
+
+
     @Override
     public void onClick(View v) {
+        Intent intent = null;
         switch (v.getId()){
             case R.id.detailBack:
                 finish();
                 break;
             case R.id.detailDelete:
                 boardDelete();
-                finish();
                 break;
             case R.id.repleSave:
                reple =repleText.getText().toString().trim();
                 repleInsert();
                 repleText.setText("");
-                finish();
+                break;
+            case R.id.detailUpdate:
+                intent = new Intent(this,BoardUpdateActivity.class);
+                intent.putExtra("subject",detailSubject.getText().toString().trim());
+                intent.putExtra("content",detailContent.getText().toString().trim());
+                intent.putExtra("id",user_id);
+                intent.putExtra("lev",lev);
+                intent.putExtra("filename",filename);
+                intent.putExtra("thumb",thumb);
+                intent.putExtra("listnum",listnum);
+                intent.putExtra("item",mypage);
+                intent.putExtra("moimcode",mypage.getMoimcode());
+
+                startActivity(intent);
+
                 break;
         }
     }
@@ -224,7 +263,7 @@ public class BoardDetailActivity extends AppCompatActivity implements View.OnCli
                 String rt  = json.getString("result");
                 if(rt.equals("OK")){
                     Toast.makeText(getApplicationContext(),"댓글 저장 성공!",Toast.LENGTH_SHORT).show();
-
+                    repleList();
                 }else {
                     Toast.makeText(getApplicationContext(),"실패",Toast.LENGTH_SHORT).show();
                 }
@@ -318,12 +357,28 @@ public class BoardDetailActivity extends AppCompatActivity implements View.OnCli
                     board_select.setLev(temp.getInt("lev"));
                     board_select.setEditdate(temp.getString("editdate"));
                     board_select.setContent(temp.getString("content"));
+                    String id=board_select.getId();
 
+
+                    if(mypage.getPermit()<3){
+                        detailDelete.setVisibility(View.VISIBLE);
+                        detailUpdate.setVisibility(View.VISIBLE);
+                    }
+                    if(id.equals(user_id)){
+                        detailDelete.setVisibility(View.VISIBLE);
+                        detailUpdate.setVisibility(View.VISIBLE);
+                    }
                     detailSubject.setText(board_select.getSubject());
                     detailName.setText(board_select.getName());
                     detailContent.setText(board_select.getContent());
-                    // Glide 사용
-                    Glide.with(detailImage).load(board_select.getFilename()).error(R.drawable.ic_error_w).placeholder(R.drawable.ic_empty_b).into(detailImage);
+                    if(board_select.getFilename()!=null){
+                        // Glide 사용
+                        Glide.with(detailImage).load(board_select.getFilename()).error(R.drawable.ic_error_w).placeholder(R.drawable.ic_empty_b).into(detailImage);
+                    }else detailImage.setVisibility(View.GONE);
+                    filename=board_select.getFilename();
+                    lev=board_select.getLev();
+                    thumb=board_select.getThumb();
+
 
                 }
             }

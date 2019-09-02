@@ -38,6 +38,7 @@ import com.example.meetingactivity.adapter.ShowAdapter;
 import com.example.meetingactivity.helper.FileUtils;
 import com.example.meetingactivity.helper.PhotoHelper;
 import com.example.meetingactivity.model.Board;
+import com.example.meetingactivity.model.MemberTest;
 import com.example.meetingactivity.model.Mypage;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -79,14 +80,14 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
     private Boolean isFabOpen = false;
     private FloatingActionButton fab,fab1,fab2;
     LinearLayout fabLayout,fabLayout1,fabLayout2,boardLayout;
-    LinearLayout binputLayout,layoutDetail;
+    LinearLayout binputLayout;
     TextView textFab1,textFab2;
     Button bbntBack, bbntWrite;
     EditText bSubject,bContent;
-    ListView listNotice,listBoard,listReple;
+    ListView listNotice,listBoard;
     ArrayList<Board> list1,list2;
     ImageButton imageButton;
-    ImageView imageView;
+    ImageView imageView3;
 
 
 
@@ -118,6 +119,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
     String user_id;
     Mypage item;
     Board board;
+    MemberTest memberTest;
+    int permit=0;
     // 업로드할 사진파일의 경로
     String filePathBig = null;
 
@@ -161,6 +164,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
         if(getArguments() != null){
             user_id = getArguments().getString("user_id");
             item = (Mypage) getArguments().getSerializable("item");
+
+
         }
 
         // Inflate the layout for this fragment
@@ -186,9 +191,8 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
 
 
 
+        imageView3=view.findViewById(R.id.imageView3);
 
-
-       listReple=view.findViewById(R.id.listReple);
 
 
         //공지사항 입력 후 리스트에 추가
@@ -212,7 +216,6 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
         listBoard.setOnItemClickListener(this);
         listNotice.setOnItemClickListener(this);
 
-        imageView=view.findViewById(R.id.imageView3);
 
         //게시글
         bbntBack=view.findViewById(R.id.bbntBack);
@@ -233,13 +236,15 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
         fab1.setOnClickListener(this);
         fab2.setOnClickListener(this);
 
+
+
+
         return view;
     }
 
     @Override
     public void onResume() {
         super.onResume();
-
         getlist();
     }
     //게시글 리스트 받아오는 통신
@@ -304,6 +309,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
                 boardLayout.setVisibility(View.GONE);
                 fabLayout.setVisibility(View.GONE);
                 binputLayout.setVisibility(View.VISIBLE);
+                imageView3.setVisibility(View.GONE);
                 break;
             case R.id.fab2: //공지사항 입력화면으로  //+모임장 또는 관리자 권한을 가진사람만 보여주게해야함
                 masterLev="1";
@@ -311,6 +317,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
                 boardLayout.setVisibility(View.GONE);
                 fabLayout.setVisibility(View.GONE);
                 binputLayout.setVisibility(View.VISIBLE);
+                imageView3.setVisibility(View.GONE);
                 break;
             case R.id.bbntBack: //돌아가기 버튼
                 bSubject.setText("");
@@ -339,6 +346,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
 
                 if (filePathBig == null) {
                     params.setForceMultipartEntityContentType(true);
+                    imageView3.setVisibility(View.INVISIBLE);
                 } else{
                     try {
                         params.put("filename",new File(filePathBig));
@@ -357,6 +365,7 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
                             String rt  = json.getString("result");
                             if(rt.equals("OK")){
                                 Toast.makeText(getActivity(),"저장성공",Toast.LENGTH_SHORT).show();
+
                                 getlist();
                             }else {
                                 Toast.makeText(getActivity(),"실패",Toast.LENGTH_SHORT).show();
@@ -400,7 +409,12 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
             fab1.startAnimation(fab_open);
             fab2.startAnimation(fab_open);
             fabLayout1.setVisibility(View.VISIBLE);
-            fabLayout2.setVisibility(View.VISIBLE);
+            if(item.getPermit()>2){
+                fabLayout2.setVisibility(View.GONE);
+            }else {
+                fabLayout2.setVisibility(View.VISIBLE);
+            }
+
             fab1.setClickable(true);
             fab2.setClickable(true);
             isFabOpen = true;
@@ -585,6 +599,9 @@ public class BoardFragment extends Fragment implements View.OnClickListener, Ada
                 }
                 break;
         }
+
+        Glide.with(imageView3).load(filePathBig).error(R.drawable.ic_error_w).placeholder(R.drawable.ic_empty_b).into(imageView3);
+        imageView3.setVisibility(View.VISIBLE);
 
     }
 

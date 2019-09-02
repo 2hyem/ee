@@ -110,11 +110,20 @@
             android:text="돌아가기" />
 
         <Button
+            android:id="@+id/detailUpdate"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="게시글수정"
+            android:visibility="gone" />
+
+        <Button
             android:id="@+id/detailDelete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="게시글 삭제" />
+            android:text="게시글 삭제"
+            android:visibility="gone" />
 
     </LinearLayout>
 

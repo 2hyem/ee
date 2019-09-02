@@ -17,7 +17,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".Activity.BoardDetailActivity"></activity>
+        <activity android:name=".Activity.BoardUpdateActivity"></activity>
+        <activity android:name=".Activity.BoardDetailActivity" />
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

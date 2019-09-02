@@ -2,6 +2,7 @@ package com.example.meetingactivity.adapter;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
@@ -9,7 +10,9 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.example.meetingactivity.Activity.BoardDetailActivity;
 import com.example.meetingactivity.R;
+import com.example.meetingactivity.model.Mypage;
 import com.example.meetingactivity.model.Redat;
 import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.AsyncHttpResponseHandler;
@@ -27,6 +30,7 @@ public class RepleAdapter extends ArrayAdapter<Redat> implements View.OnClickLis
     int resource;
     Button repleDelete;
     int renum=0;
+    String userid;
 
     //댓글 삭제
     String URL_RepleDelete ="http://192.168.0.93:8080/moim.4t.spring/deleteRedat.tople";
@@ -41,6 +45,8 @@ public class RepleAdapter extends ArrayAdapter<Redat> implements View.OnClickLis
         this.resource=resource;
         client= new AsyncHttpClient();
         response_repleDelete=new HttpResponse_RepleDelete(activity);
+
+
     }
 
 
@@ -63,6 +69,7 @@ public class RepleAdapter extends ArrayAdapter<Redat> implements View.OnClickLis
 
 
             repleDelete=convertView.findViewById(R.id.repleDelete);
+
             renum=item.getRenum();
 
             repleDelete.setOnClickListener(this);
@@ -80,6 +87,7 @@ public class RepleAdapter extends ArrayAdapter<Redat> implements View.OnClickLis
                 params.put("renum",renum);
                 //Toast.makeText(activity,"renum"+renum,Toast.LENGTH_SHORT).show();
                 client.post(URL_RepleDelete,params,response_repleDelete);
+
                 break;
 
         }
@@ -98,8 +106,8 @@ public class RepleAdapter extends ArrayAdapter<Redat> implements View.OnClickLis
                 JSONObject json = new JSONObject(strJson);
                 String rt  = json.getString("result");
                 if(rt.equals("OK")){
-                    Toast.makeText(activity,"삭제성공",Toast.LENGTH_SHORT).show();
-
+                    Toast.makeText(activity,"댓글 삭제 성공",Toast.LENGTH_SHORT).show();
+                    ((BoardDetailActivity)getContext()).repleList();
                 }else {
                     Toast.makeText(activity,"실패",Toast.LENGTH_SHORT).show();
                 }

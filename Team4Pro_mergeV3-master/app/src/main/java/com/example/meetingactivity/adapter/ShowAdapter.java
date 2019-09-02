@@ -47,9 +47,11 @@ public class ShowAdapter extends ArrayAdapter<Board> {
             textEditdate.setText(item.getEditdate());
             textSubject.setText(item.getSubject());
             textContent.setText(item.getContent());
+            if (item.getFilename()!=null){
+                // Glide 사용
+                Glide.with(boardImage).load(item.getFilename()).error(R.drawable.ic_error_w).placeholder(R.drawable.ic_empty_b).into(boardImage);
+            }else boardImage.setVisibility(View.GONE);
 
-            // Glide 사용
-            Glide.with(boardImage).load(item.getFilename()).error(R.drawable.ic_error_w).placeholder(R.drawable.ic_empty_b).into(boardImage);
 
 
 

@@ -10,6 +10,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import android.widget.AdapterView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -35,7 +36,7 @@ import cz.msebera.android.httpclient.Header;
 
 
 
-public class InforFragment extends Fragment implements View.OnClickListener {
+public class InforFragment extends Fragment implements View.OnClickListener, AdapterView.OnItemClickListener {
 
     ListView listNotice2;
     ArrayList<Board> list;
@@ -109,8 +110,8 @@ public class InforFragment extends Fragment implements View.OnClickListener {
         ImageView imageBanner=view.findViewById(R.id.imageBanner);
         Glide.with(getActivity()).load(item.getPic()).error(R.drawable.ic_error_w).placeholder(R.drawable.ic_empty_b).into(imageBanner);
 
-        txtTitle=view.findViewById(R.id.txtTitle);
-        txtTitle.setText(item.getMoimname());
+//        txtTitle=view.findViewById(R.id.txtTitle);
+//        txtTitle.setText(item.getMoimname());
         TextView textMoimContent =view.findViewById(R.id.textMoimContent);
         textMoimContent.setText(item.getProd());
 
@@ -121,6 +122,7 @@ public class InforFragment extends Fragment implements View.OnClickListener {
         client = new AsyncHttpClient();
         response=new HttpResponse(getActivity());
         listNotice2.setAdapter(adapter);
+        listNotice2.setOnItemClickListener(this);
 
 
 
@@ -162,6 +164,10 @@ public class InforFragment extends Fragment implements View.OnClickListener {
         }
     }
 
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+    }
 
 
     public interface OnFragmentInteractionListener {
@@ -172,27 +178,12 @@ public class InforFragment extends Fragment implements View.OnClickListener {
 
     class HttpResponse extends AsyncHttpResponseHandler {
         Activity activity;
-        ProgressDialog dialog;
+
 
         public HttpResponse(Activity activity) {
             this.activity = activity;
         }
-        // 통신 시작
 
-        //프래그먼트와 연결된 액티비티가 onStart()되어 사용자에게 프래그먼트가 보일 때 호출
-//        @Override
-//        public void onStart() {
-//            dialog = new ProgressDialog(activity);
-//            dialog.setMessage("잠시만 기다려 주세요...");
-//            dialog.setCancelable(false);
-//            dialog.show();
-//        }
-//        // 통신 종료
-//        @Override
-//        public void onFinish() {
-//            dialog.dismiss();
-//            dialog = null;
-//        }
         // 통신 성공
         @Override
         public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
